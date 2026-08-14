@@ -1,0 +1,21 @@
+# Keep the official IndexTTS lower bounds while allowing the newer versions
+# commonly bundled with ComfyUI. The vendored source includes compatibility
+# shims tested with Transformers 4.52.1 and 4.57.6.
+accelerate==1.8.1
+cn2an==0.5.22
+descript-audiotools==0.7.2
+einops>=0.8.1
+fugashi>=1.2.0
+unidic-lite>=1.0.0
+g2p-en==2.1.0
+jieba==0.42.1
+json5==0.10.0
+librosa==0.10.2.post1
+modelscope==1.27.0
+omegaconf>=2.3.0
+safetensors==0.5.2
+sentencepiece>=0.2.1
+textstat>=0.7.10
+tokenizers>=0.21.0,<0.24
+transformers>=4.52.1,<4.58
+WeTextProcessing

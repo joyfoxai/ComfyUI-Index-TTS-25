@@ -1,0 +1,12 @@
+__pycache__/
+.ipynb_checkpoints/
+*.py[cod]
+*.so
+.DS_Store
+.env
+.venv/
+runtime_libs/
+outputs/
+checkpoints/
+checkpoints_2/
+*.log
