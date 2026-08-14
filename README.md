@@ -17,16 +17,17 @@
 
 ## 节点目录
 
-将整个目录放在：
+在 ComfyUI 的 `custom_nodes` 目录中克隆本仓库：
 
-```text
-ComfyUI/custom_nodes/ComfyUI-IndexTTS25/
+```bash
+cd ComfyUI/custom_nodes
+git clone https://github.com/joyfoxai/ComfyUI-Index-TTS-25.git
 ```
 
 节点已经内置所需的官方 IndexTTS Python 源码：
 
 ```text
-ComfyUI-IndexTTS25/index-tts/indextts/
+ComfyUI-Index-TTS-25/index-tts/indextts/
 ```
 
 内置源码对应官方提交 `a371df7`。通常不需要另外克隆 IndexTTS 仓库。
@@ -36,13 +37,12 @@ ComfyUI-IndexTTS25/index-tts/indextts/
 使用启动 ComfyUI 的同一个 Python 安装：
 
 ```bash
-cd /root/lvfengchun/code/ComfyUI
-/root/lvfengchun/miniforge3/envs/comfyui_py310/bin/python \
-  -m pip install -r custom_nodes/ComfyUI-IndexTTS25/requirements.txt
+cd ComfyUI
+python -m pip install -r custom_nodes/ComfyUI-Index-TTS-25/requirements.txt
 ```
 
-不要为了本节点单独覆盖 ComfyUI 已安装的 Torch、TorchAudio 或 CUDA。节点已适配当前
-ComfyUI 环境中的 Transformers 4.57.6。
+如果 ComfyUI 使用虚拟环境或便携版 Python，请将上面的 `python` 换成该环境对应的
+Python 可执行文件。不要为了本节点单独覆盖 ComfyUI 已安装的 Torch、TorchAudio 或 CUDA。
 
 ### 额外依赖说明
 
@@ -59,8 +59,7 @@ ComfyUI 环境中的 Transformers 4.57.6。
 只补装日语依赖可执行：
 
 ```bash
-/root/lvfengchun/miniforge3/envs/comfyui_py310/bin/python \
-  -m pip install fugashi unidic-lite
+python -m pip install fugashi unidic-lite
 ```
 
 Loader 中的以下选项属于可选加速功能，默认关闭即可：
@@ -75,7 +74,7 @@ Loader 中的以下选项属于可选加速功能，默认关闭即可：
 节点目录中提供了下载脚本：
 
 ```bash
-cd /root/lvfengchun/code/ComfyUI/custom_nodes/ComfyUI-IndexTTS25
+cd ComfyUI/custom_nodes/ComfyUI-Index-TTS-25
 ```
 
 下载两个版本：
@@ -124,16 +123,15 @@ INDEXTTS_MODELS_DIR=/data/comfyui_models ./download_models.sh all
 脚本会自动追加 `indextts` 子目录。也可以指定 ComfyUI 的 Python：
 
 ```bash
-PYTHON_BIN=/root/lvfengchun/miniforge3/envs/comfyui_py310/bin/python \
-  ./download_models.sh all
+PYTHON_BIN=/path/to/comfyui/python ./download_models.sh all
 ```
 
 ## 模型应该放在哪里
 
-当前服务器推荐使用公共模型目录：
+默认情况下，模型放在 ComfyUI 的标准模型目录：
 
 ```text
-/root/comfyui_models/indextts/
+ComfyUI/models/indextts/
 ├── IndexTTS-2/
 │   ├── config.yaml
 │   ├── bpe.model
@@ -155,26 +153,20 @@ PYTHON_BIN=/root/lvfengchun/miniforge3/envs/comfyui_py310/bin/python \
 节点会依次检查：
 
 1. 环境变量 `INDEXTTS_MODELS_DIR` 指定的位置。
-2. `/root/comfyui_models/indextts`。
-3. `ComfyUI/models/indextts`。
+2. `ComfyUI/models/indextts`。
 
 修改模型目录或新下载模型后，需要重启 ComfyUI 才会刷新 Loader 下拉列表。
 
-### 是否需要创建软链接
+### 使用自定义模型目录
 
-使用 `/root/comfyui_models/indextts` 时不需要软链接，节点会直接扫描该目录。
-
-如果其他节点只扫描 ComfyUI 标准模型目录，可以按模型创建软链接：
+不需要创建软链接。通过环境变量指定模型根目录后再启动 ComfyUI：
 
 ```bash
-mkdir -p /root/lvfengchun/code/ComfyUI/models/indextts
-ln -s /root/comfyui_models/indextts/IndexTTS-2 \
-  /root/lvfengchun/code/ComfyUI/models/indextts/IndexTTS-2
-ln -s /root/comfyui_models/indextts/IndexTTS-2.5 \
-  /root/lvfengchun/code/ComfyUI/models/indextts/IndexTTS-2.5
+export INDEXTTS_MODELS_DIR=/path/to/models
+python main.py
 ```
 
-同名目标已经存在时不要重复执行 `ln -s`。
+如果路径本身不是以 `indextts` 命名，节点会自动在其下查找 `indextts` 子目录。
 
 ## 节点和连接方式
 
@@ -256,9 +248,9 @@ python -m pip install fugashi unidic-lite
 
 ### 输出刺耳或接近白噪声
 
-旧版节点曾让 TorchAudio 2.9 直接保存 IndexTTS 的 `int16` 张量，可能造成接近 100% 削波。
-当前节点直接将原生 PCM 显式归一化为 ComfyUI 浮点 `AUDIO`，不要绕过节点重新保存底层
-`int16` 张量。
+节点会将 IndexTTS 返回的原生 PCM 显式归一化为 ComfyUI 浮点 `AUDIO`，以避免部分
+TorchAudio 版本直接处理 `int16` 张量时产生削波。如果自行修改输出处理，请保留这一步
+归一化。
 
 ### 修改后节点没有出现
 
