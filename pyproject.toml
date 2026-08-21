@@ -1,0 +1,24 @@
+[project]
+name = "index-tts-2-5"
+version = "1.0.0"
+description = "ComfyUI audio nodes for IndexTTS 2 and IndexTTS 2.5 with voice cloning and five emotion-control modes."
+license = { file = "index-tts/LICENSE" }
+requires-python = ">=3.10"
+classifiers = [
+    "Operating System :: POSIX :: Linux",
+    "Environment :: GPU :: NVIDIA CUDA",
+]
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[project.urls]
+Repository = "https://github.com/joyfoxai/ComfyUI-Index-TTS-25"
+Documentation = "https://github.com/joyfoxai/ComfyUI-Index-TTS-25#readme"
+"Bug Tracker" = "https://github.com/joyfoxai/ComfyUI-Index-TTS-25/issues"
+
+[tool.comfy]
+PublisherId = "fengchun-lyu"
+DisplayName = "IndexTTS 2 / 2.5"
+
